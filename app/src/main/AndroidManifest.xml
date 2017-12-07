@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.humuson.tms.demo.another">
+
+
+    <!-- push -->
+    <permission android:name="com.humuson.tms.demo.another.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <uses-permission android:name="com.humuson.tms.demo.another.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETE" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- push -->
+
+    <!-- network -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- network -->
+
+    <!-- storage -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- storage -->
+
+    <!-- state -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- state -->
+
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <!-- GCM/Private Receiver -->
+        <receiver
+            android:name="com.apms.sdk.push.PushReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <!--<action android:name="com.google.android.c2dm.intent.REGISTRATION" />-->
+                <action android:name="org.mosquitto.android.mqtt.MSGRECVD" />
+                <category android:name="com.humuson.tms.demo.another" />
+            </intent-filter>
+        </receiver>
+
+        <!-- APMS push popup activity -->
+        <activity
+            android:name="com.apms.sdk.push.PushPopupActivity"
+            android:theme="@style/push_popup_theme"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation" />
+
+        <!-- APMS push clickNotiReceiver -->
+        <receiver android:name="com.humuson.tms.demo.another.receiver.PushNotiReceiver">
+            <intent-filter>
+                <action android:name="com.humuson.tms.demo.another.receiver.notification" />
+            </intent-filter>
+        </receiver>
+
+        <!-- APMS private RestartReceiver -->
+        <receiver android:name="com.tms.sdk.push.mqtt.RestartReceiver">
+            <intent-filter>
+                <action android:name="ACTION_MQTT_PING" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.ACTION_PACKAGE_RESTARTED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- APMS Private connectionChangeReceiver -->
+        <receiver android:name="com.tms.sdk.push.mqtt.ConnectionChangeReceiver" android:label="NetworkConnection">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- private push service -->
+        <service
+            android:name="com.tms.sdk.push.mqtt.MQTTService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="PushService"
+            android:process="com.humuson.tms.demo.another.PushService" />
+
+        <meta-data android:name="TMS_SET_ICON" android:resource="@drawable/ic_launcher" />
+        <meta-data android:name="TMS_SET_LARGE_ICON" android:resource="@drawable/ic_launcher" />
+
+
+        <activity android:name=".activity.StartUpActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
